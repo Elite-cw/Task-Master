@@ -1,0 +1,10 @@
+@extends('layouts.app')
+@section('content')
+<div class="page-head"><div><p class="meta"><a href="{{ route('projects.index') }}">My Projects</a> / Project</p><h1>{{ $project->title }}</h1><p class="meta">{{ $project->description ?: 'Keep your work organized and moving forward.' }}</p></div><div class="actions"><a class="btn" href="{{ route('projects.tasks.create', $project) }}">+ New task</a><a class="btn secondary" href="{{ route('projects.edit', $project) }}">Edit project</a></div></div>
+<div class="card"><form class="filter" method="GET"><div><label>Status</label><select name="status" onchange="this.form.submit()"><option value="">All tasks</option>@foreach(App\Models\Task::STATUSES as $option)<option value="{{ $option }}" @selected($status === $option)>{{ $option }}</option>@endforeach</select></div><button class="btn small">Filter</button>@if($status)<a class="btn small secondary" href="{{ route('projects.show', $project) }}">Clear</a>@endif</form>
+@forelse($tasks as $task)
+<article class="task" style="border-top:1px solid var(--line);padding:20px 0"><div><h2>{{ $task->title }}</h2><p>{{ $task->description ?: 'No description added.' }}</p><div class="actions"><a class="btn small secondary" href="{{ route('projects.tasks.edit', [$project, $task]) }}">Edit</a>@if($task->status !== 'Done')<form class="inline" method="POST" action="{{ route('projects.tasks.complete', [$project, $task]) }}">@csrf @method('PATCH')<button class="btn small" type="submit">Mark done</button></form>@endif<form class="inline" method="POST" action="{{ route('projects.tasks.destroy', [$project, $task]) }}">@csrf @method('DELETE')<button class="btn small danger" onclick="return confirm('Delete this task?')">Delete</button></form></div></div><span class="badge status-{{ Str::slug($task->status) }}">{{ $task->status }}</span></article>
+@empty <div class="empty">No tasks match this filter.</div>
+@endforelse</div>
+<form method="POST" action="{{ route('projects.destroy', $project) }}" onsubmit="return confirm('Delete this project and all its tasks?')">@csrf @method('DELETE')<button class="btn danger">Delete project</button></form>
+@endsection

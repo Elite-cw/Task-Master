@@ -1,0 +1,4 @@
+<label>Task title</label><input name="title" value="{{ old('title', $task->title ?? '') }}" required maxlength="255">@error('title')<p class="meta error">{{ $message }}</p>@enderror
+<label>Description <span class="meta">(optional)</span></label><textarea name="description">{{ old('description', $task->description ?? '') }}</textarea>@error('description')<p class="meta error">{{ $message }}</p>@enderror
+<label>Status</label><select name="status" required>@foreach(App\Models\Task::STATUSES as $option)<option value="{{ $option }}" @selected(old('status', $task->status ?? 'To Do') === $option)>{{ $option }}</option>@endforeach</select>@error('status')<p class="meta error">{{ $message }}</p>@enderror
+<div class="actions"><button class="btn">{{ $button }}</button><a class="btn secondary" href="{{ route('projects.show', $project) }}">Cancel</a></div>
